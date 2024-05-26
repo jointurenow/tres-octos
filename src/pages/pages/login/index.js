@@ -38,6 +38,7 @@ import BlankLayout from 'src/@core/layouts/BlankLayout'
 
 // ** Demo Imports
 import FooterIllustrationsV1 from 'src/views/pages/auth/FooterIllustration'
+import { loginUser } from 'src/services/service'
 
 // ** Styled Components
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -60,25 +61,36 @@ const FormControlLabel = styled(MuiFormControlLabel)(({ theme }) => ({
 const LoginPage = () => {
   // ** State
   const [values, setValues] = useState({
-    password: '',
+    email: "",
+    password: "",
     showPassword: false
-  })
+  });
 
-  // ** Hook
-  const theme = useTheme()
-  const router = useRouter()
+  const theme = useTheme();
+  const router = useRouter();
 
   const handleChange = prop => event => {
-    setValues({ ...values, [prop]: event.target.value })
-  }
+    setValues({ ...values, [prop]: event.target.value });
+  };
 
   const handleClickShowPassword = () => {
-    setValues({ ...values, showPassword: !values.showPassword })
-  }
+    setValues({ ...values, showPassword: !values.showPassword });
+  };
 
   const handleMouseDownPassword = event => {
-    event.preventDefault()
-  }
+    event.preventDefault();
+  };
+
+  const handleSubmit = event => {
+    event.preventDefault();
+    loginUser({ email: values.email, password: values.password })
+      .then(res => {
+        router.push("/");
+      })
+      .catch(error => {
+        console.error("Error logging in:", error);
+      });
+  };
 
   return (
     <Box className='content-center'>
@@ -163,8 +175,16 @@ const LoginPage = () => {
             </Typography>
             <Typography variant='body2'>Please sign-in to your account and start the adventure</Typography>
           </Box>
-          <form noValidate autoComplete='off' onSubmit={e => e.preventDefault()}>
-            <TextField autoFocus fullWidth id='email' label='Email' sx={{ marginBottom: 4 }} />
+          <form noValidate autoComplete='off' onSubmit={handleSubmit}>
+            <TextField
+              autoFocus
+              fullWidth
+              id='email'
+              label='Email'
+              value={values.email}
+              onChange={handleChange('email')}
+              sx={{ marginBottom: 4 }}
+            />
             <FormControl fullWidth>
               <InputLabel htmlFor='auth-login-password'>Password</InputLabel>
               <OutlinedInput
@@ -200,7 +220,7 @@ const LoginPage = () => {
               size='large'
               variant='contained'
               sx={{ marginBottom: 7 }}
-              onClick={() => router.push('/')}
+              type='submit'
             >
               Login
             </Button>
@@ -244,8 +264,9 @@ const LoginPage = () => {
       </Card>
       <FooterIllustrationsV1 />
     </Box>
-  )
-}
-LoginPage.getLayout = page => <BlankLayout>{page}</BlankLayout>
+  );
+};
 
-export default LoginPage
+LoginPage.getLayout = page => <BlankLayout>{page}</BlankLayout>;
+
+export default LoginPage;

@@ -19,7 +19,7 @@ import ChevronDown from 'mdi-material-ui/ChevronDown'
 
 
 
-const CardWithCollapse = ({data}) => {
+const CardWithCollapse = ({ data, key }) => {
   // ** State
   const [collapse, setCollapse] = useState(false)
 

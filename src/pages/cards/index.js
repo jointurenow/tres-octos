@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
+import { getCollaborations } from '../../services/service.js'
 
 // ** MUI Imports
 import Grid from '@mui/material/Grid'
@@ -21,22 +21,16 @@ import CardWithCollapse from 'src/views/cards/CardWithCollapse'
 import CardVerticalRatings from 'src/views/cards/CardVerticalRatings'
 import CardNavigationCenter from 'src/views/cards/CardNavigationCenter'
 import CardHorizontalRatings from 'src/views/cards/CardHorizontalRatings'
+import log from 'eslint-plugin-react/lib/util/log.js'
 
 const CardBasic = () => {
 
   const [proposal, setProposal] = useState([])
 
-  useEffect(() => {
-    const getCollaborations = async () => {
-      try {
-        const response = await axios.get('http://localhost:8000/api/collaboration-proposals')
-        console.log(response.data.data)
-        setProposal(response.data.data)
-      } catch (error) {
-          console.log(error);
-      }
-    }
-    getCollaborations()
+  useEffect(async () => {
+    const data = await getCollaborations();
+    console.log(data);
+    setProposal(data);
   }, [])
 
 
@@ -52,8 +46,8 @@ const CardBasic = () => {
         <CardUser />
       </Grid>
       <Grid item xs={12} sm={6} md={4}>
-      {Array.isArray(proposal) && proposal.map((data, index) => (
-          <CardWithCollapse data={data} />
+        {Array.isArray(proposal) && proposal.map((data, index) => (
+          <CardWithCollapse data={data} key={data.id} />
         ))}
       </Grid>
       <Grid item xs={12} sm={6}>
